@@ -1,5 +1,4 @@
-import { IMG_CDN_URL } from "./ResturantList";
-
+import { IMG_CDN_URL } from "../../public/constants"
 // Restaurant card component: Image, name, cuisine
 const RestaurantCard = ({
   cloudinaryImageId,
