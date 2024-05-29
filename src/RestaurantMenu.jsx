@@ -6,7 +6,7 @@ import {
   ITEM_IMG_CDN_URL,
   MENU_ITEM_TYPE_KEY,
   RESTAURANT_TYPE_KEY,
-} from "./ResturantList";
+} from "../../public/constants";
 import Shimmer from "./Shimmer";
 import { useDispatch } from 'react-redux';
 import { addToCart } from "./slice/cartSlice";
