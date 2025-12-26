@@ -1,11 +1,11 @@
-import { createSlice, current } from '@reduxjs/toolkit';
+import { createSlice, current } from "@reduxjs/toolkit";
 
 const initialState = {
-  items: JSON.parse(localStorage.getItem('cart')) || [],
+  items: JSON.parse(localStorage.getItem("cart")) || [],
 };
 
 const cartSlice = createSlice({
-  name: 'cart',
+  name: "cart",
   initialState,
   reducers: {
     addToCart: (state, action) => {
@@ -14,42 +14,42 @@ const cartSlice = createSlice({
         quantity: 1,
       });
 
-      localStorage.setItem('cart', JSON.stringify(state.items));
+      localStorage.setItem("cart", JSON.stringify(state.items));
     },
 
     removeFromCart: (state, action) => {
       state.items = state.items.filter(
-        (cartItem) => cartItem?.item?.id !== action.payload.id
+        (cartItem) => cartItem?.item?.id !== action.payload.id,
       );
-      localStorage.setItem('cart', JSON.stringify(state.items));
+      localStorage.setItem("cart", JSON.stringify(state.items));
     },
 
     increaseItemQuantity: (state, action) => {
       const { id } = action.payload;
 
       const itemToIncrease = state.items.find(
-        (cartItem) => cartItem?.item?.id === id
+        (cartItem) => cartItem?.item?.id === id,
       );
 
       if (itemToIncrease) {
         itemToIncrease.quantity += 1;
-        localStorage.setItem('cart', JSON.stringify(state.items));
+        localStorage.setItem("cart", JSON.stringify(state.items));
       }
     },
     decreaseItemQuantity: (state, action) => {
       const { id } = action.payload;
       const itemToDecrease = state.items.find(
-        (cartItem) => cartItem?.item?.id === id
+        (cartItem) => cartItem?.item?.id === id,
       );
 
       if (itemToDecrease && itemToDecrease.quantity > 1) {
         itemToDecrease.quantity -= 1;
-        localStorage.setItem('cart', JSON.stringify(state.items));
+        localStorage.setItem("cart", JSON.stringify(state.items));
       }
     },
     clearCart: (state) => {
       state.items = [];
-      localStorage.removeItem('cart');
+      localStorage.removeItem("cart");
     },
   },
 });
@@ -58,7 +58,7 @@ export const selectItemsInCart = ({ cart }) => cart?.items;
 
 export const selectTotalPrice = ({ cart }) => {
   return cart?.items.reduce((total, cartItem) => {
-    return total + cartItem.item.price/100 * cartItem.quantity;
+    return total + (cartItem.item.price / 100) * cartItem.quantity;
   }, 0);
 };
 

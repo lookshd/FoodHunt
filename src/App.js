@@ -6,35 +6,32 @@ import About from "./pages/About";
 import React from "react";
 import Login from "./pages/Login";
 import Contact from "./pages/Contact";
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 import RestaurantMenu from "./pages/RestaurantMenu";
-import { createBrowserRouter,Outlet,RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import Cart from "./pages/Cart";
 import useOnline from "./hooks/useOnline";
 function App() {
-const isonline=useOnline();
+  const isonline = useOnline();
 
   return (
-   <>
- {   isonline?
- (<>
-   <Toaster />
- <Header/>
-<Outlet/>
- <Footer/></>
- )
-:
-(
-  <div className='helloji'>
-    <h1 className='text-4xl font-bold'>Oops! Connection lost</h1>
-    <p>
-      Looks like you're offline, please check your internet connection.
-    </p>
-  </div>
-)
-}
- </>
-   
+    <>
+      {isonline ? (
+        <>
+          <Toaster />
+          <Header />
+          <Outlet />
+          <Footer />
+        </>
+      ) : (
+        <div className="helloji">
+          <h1 className="text-4xl font-bold">Oops! Connection lost</h1>
+          <p>
+            Looks like you're offline, please check your internet connection.
+          </p>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -63,11 +60,11 @@ export const appRouter = createBrowserRouter([
       },
       {
         path: "/cart",
-        element: <Cart/>,
+        element: <Cart />,
       },
     ],
-  }, 
-  {  
+  },
+  {
     path: "/login",
     element: <Login />,
   },

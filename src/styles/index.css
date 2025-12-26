@@ -22,8 +22,8 @@
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-color: inherit; 
-text-decoration: none;
+  color: inherit;
+  text-decoration: none;
 }
 
 /* Header CSS */
@@ -38,7 +38,11 @@ text-decoration: none;
   box-shadow: -1px 4px 20px 14px rgba(0, 0, 0, 0.2);
   color: #3d4152;
   font-weight: bold;
-  font-family: ProximaNova,arial,Helvetica Neue,sans-serif;
+  font-family:
+    ProximaNova,
+    arial,
+    Helvetica Neue,
+    sans-serif;
 }
 
 .logo {
@@ -61,7 +65,6 @@ text-decoration: none;
   padding: 28px 20px 0 0;
   font-size: large;
   cursor: pointer;
- 
 }
 
 /* Body CSS */
@@ -190,20 +193,17 @@ text-decoration: none;
   border-radius: 5px;
 }
 .shimmer-card2 {
-    width:100%;
+  width: 100%;
   height: 200px;
   background: lightgrey;
   margin-bottom: 8px;
   border-radius: 5px;
 
-
   justify-content: center;
   align-items: center;
-  
 }
 
-
-.Contact-cont{
+.Contact-cont {
   display: flex;
   flex-wrap: wrap;
   margin: 100px auto 30px;
@@ -384,7 +384,6 @@ text-decoration: none;
   align-items: flex-end;
   width: 200px;
   overflow-x: visible;
-  
 }
 .menu-item-img {
   height: 100px;
@@ -392,7 +391,7 @@ text-decoration: none;
   border-radius: 5px;
 }
 .add-btn {
-  background-color:#53a3e1;
+  background-color: #53a3e1;
   color: var(--text-color);
   padding: 8px 25px;
   cursor: pointer;
@@ -402,9 +401,13 @@ text-decoration: none;
   border-radius: 5px;
 }
 .shadow-md {
-  --tw-shadow: 0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);
-  --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color),0 2px 4px -2px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 transparent),var(--tw-ring-shadow, 0 0 transparent),var(--tw-shadow);
+  --tw-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --tw-shadow-colored:
+    0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);
+  box-shadow:
+    var(--tw-ring-offset-shadow, 0 0 transparent),
+    var(--tw-ring-shadow, 0 0 transparent), var(--tw-shadow);
 }
 .p-8 {
   padding: 2rem;
@@ -420,7 +423,7 @@ text-decoration: none;
   width: 30%; /* 5/12 */
 
   height: fit-content;
-  position:sticky;
+  position: sticky;
   top: 40px;
   padding: 32px;
   border-radius: 0.375rem;
@@ -433,7 +436,7 @@ text-decoration: none;
 
 /* Styles for the heading */
 .basis-5\/12 h2 {
-  font-size: 1.50rem;
+  font-size: 1.5rem;
   font-weight: bolder;
   border-bottom: 1px solid #e5e7eb;
   padding-bottom: 16px;
@@ -518,7 +521,8 @@ text-decoration: none;
 }
 
 .shadow-md {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
@@ -817,140 +821,99 @@ text-decoration: none;
   color: #000000;
   font-weight: bold;
   border-radius: 9px; /* Adjust the value as needed */
-  width:73px ;
+  width: 73px;
   height: 25px;
 }
 
-.add{
+.add {
   background-color: #8c9cf5;
   font-weight: bold;
   width: 32px;
 
   height: 23px;
   border-radius: 6px;
- color: rgb(0, 0, 0);
+  color: rgb(0, 0, 0);
 }
 
-.minus
-{
+.minus {
   background-color: #8c9cf5;
   font-weight: bold;
   width: 32px;
 
   height: 23px;
   border-radius: 6px;
- color: rgb(0, 0, 0);
+  color: rgb(0, 0, 0);
 }
-.number{
-  
-    font-weight: 700;
+.number {
+  font-weight: 700;
 
-  
+  width: 2rem; /* You may adjust the value as needed */
 
-    width: 2rem; /* You may adjust the value as needed */
- 
+  height: 2rem; /* You may adjust the value as needed */
 
-    height: 2rem; /* You may adjust the value as needed */
-  
+  display: flex;
 
-    display: flex;
-  
-  
+  justify-content: center;
 
-    justify-content: center;
-  
-  
-  
-    align-items: center;
-  
+  align-items: center;
 }
-.itemshow{
-  
-    position: absolute;
-  
-  
-  
-    top: 0.75rem;
-    right: 85px;
-  
-  
+.itemshow {
+  position: absolute;
 
-    background-color: #075adf; /* You can change this color */
-  
-  
+  top: 0.75rem;
+  right: 85px;
 
-    color: #fff; /* You can change this color */
-  
-    display: flex;
-  
-  
-  
-    justify-content: center;
-  
-  
- 
-    align-items: center;
- 
-  
- 
-    width: 1.25rem; /* Adjust as needed */
- 
-  
+  background-color: #075adf; /* You can change this color */
 
-    height: 1.25rem; /* Adjust as needed */
- 
-  
- 
-    font-size: 0.75rem; /* Adjust as needed */
-  
-  
- 
-    border-radius: 9999px; /* This makes the element fully rounded */
- 
+  color: #fff; /* You can change this color */
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  width: 1.25rem; /* Adjust as needed */
+
+  height: 1.25rem; /* Adjust as needed */
+
+  font-size: 0.75rem; /* Adjust as needed */
+
+  border-radius: 9999px; /* This makes the element fully rounded */
 }
-.Addtonew{
+.Addtonew {
   margin-top: 10px;
   width: 70px;
   color: #5684f0;
   border-radius: 2px;
   font-weight: 700;
   cursor: pointer;
-
 }
-.helloji{
-  
-    display: flex;
-  
-  
+.helloji {
+  display: flex;
 
-    flex-direction: column;
-  
- 
-    justify-content: center;
-  
-  
+  flex-direction: column;
 
-    align-items: center;
-  
+  justify-content: center;
 
-    min-height: 100vh;
-  
+  align-items: center;
+
+  min-height: 100vh;
 }
-.footerr{
+.footerr {
   max-width: 100%; /* You would need to specify the actual maximum width value */
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-    padding-top: 1rem; /* You would need to specify the actual padding value */
-    padding-bottom: 1rem; /* You would need to specify the actual padding value */
-    border-top: 1px solid #000;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  padding-top: 1rem; /* You would need to specify the actual padding value */
+  padding-bottom: 1rem; /* You would need to specify the actual padding value */
+  border-top: 1px solid #000;
 }
 
-
-.Addtonew{
+.Addtonew {
   height: 22px;
 }
-.toast{
+.toast {
   height: auto;
 }
 .shimmer-container {
@@ -1069,78 +1032,78 @@ text-decoration: none;
   }
   to {
     background-position: 1000px 0;
-  }}
-  .login-container {
-    width: 380px;
-    margin: 40px auto 0;
   }
-  
-  .login-form {
-    position: relative;
-    z-index: 1;
-    background:#c9e1f5;
-    border-radius: 10px;
-    max-width: 380px;
-    padding: 25px 40px;
-    text-align: center;
-  }
-  
-  .login-form input {
-    outline: 0;
-    background: var(--input-bg);
-    width: 100%;
-    border: 0;
-    border-radius: 5px;
-    margin: 0 0 15px;
-    padding: 15px;
-    box-sizing: border-box;
-    font-size: 14px;
-  }
-  
-  .login-form input:focus {
-    background: var(--input-bg-focus);
-  }
-  
-  .login-form button {
-    text-transform: uppercase;
-    outline: 0;
-    background: #465f91;
-    width: 100%;
-    border: 0;
-    border-radius: 5px;
-    padding: 15px;
-    color: #ffffff;
-    font-size: 14px;
-    -webkit-transition: all 0.3 ease;
-    transition: all 0.3 ease;
-    cursor: pointer;
-  }
-  
-  .login-form button:active {
-    background: #395591;
-  }
-  
-  .login-form span {
-    font-size: 40px;
-    color: #4b6cb7;
-    margin-bottom: 25px;
-    display: block;
-  }
-  
-  .login-form p.error {
-    margin: 0 0 10px 10px;
-    text-align: left;
-    font-size: 13px;
-    color: rgb(7, 8, 8);
-  }
-  .login-btn-green {
-    color: var(--dark-green);
-  }
-  
-  .login-btn-red {
-    color: var(--x-dark-orange);
-  }
-  
+}
+.login-container {
+  width: 380px;
+  margin: 40px auto 0;
+}
+
+.login-form {
+  position: relative;
+  z-index: 1;
+  background: #c9e1f5;
+  border-radius: 10px;
+  max-width: 380px;
+  padding: 25px 40px;
+  text-align: center;
+}
+
+.login-form input {
+  outline: 0;
+  background: var(--input-bg);
+  width: 100%;
+  border: 0;
+  border-radius: 5px;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.login-form input:focus {
+  background: var(--input-bg-focus);
+}
+
+.login-form button {
+  text-transform: uppercase;
+  outline: 0;
+  background: #465f91;
+  width: 100%;
+  border: 0;
+  border-radius: 5px;
+  padding: 15px;
+  color: #ffffff;
+  font-size: 14px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+}
+
+.login-form button:active {
+  background: #395591;
+}
+
+.login-form span {
+  font-size: 40px;
+  color: #4b6cb7;
+  margin-bottom: 25px;
+  display: block;
+}
+
+.login-form p.error {
+  margin: 0 0 10px 10px;
+  text-align: left;
+  font-size: 13px;
+  color: rgb(7, 8, 8);
+}
+.login-btn-green {
+  color: var(--dark-green);
+}
+
+.login-btn-red {
+  color: var(--x-dark-orange);
+}
 
 .login-btn-green {
   color: var(--light-green);
@@ -1151,16 +1114,16 @@ text-decoration: none;
 }
 /* nav items CSS End*/
 
-.logout-btn{
- color:#060606d8;
- border-radius: 5px;
-font-weight: bold;
-}
-.login-btn{
-  color:#060606d8;
+.logout-btn {
+  color: #060606d8;
   border-radius: 5px;
- font-weight: bold;
- }
- .Addtonew{
+  font-weight: bold;
+}
+.login-btn {
+  color: #060606d8;
+  border-radius: 5px;
+  font-weight: bold;
+}
+.Addtonew {
   height: fit-content;
- }
+}

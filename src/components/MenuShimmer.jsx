@@ -1,20 +1,18 @@
-import React from 'react'
+import React from "react";
 
 const Menushimmer = () => {
   return (
     <div className="Menushimmer">
-    <div className="heading">
- {   Array(1)
+      <div className="heading">
+        {Array(1)
           .fill("")
           .map((e, index) => (
             <div key={index} className="shimmer-card2"></div>
           ))}
+      </div>
+      <div className="normal"></div>
     </div>
-    <div className="normal">
+  );
+};
 
-    </div>
-    </div>
-  )
-}
-
-export default Menushimmer
+export default Menushimmer;

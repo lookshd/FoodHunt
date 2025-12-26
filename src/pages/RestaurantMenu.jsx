@@ -8,10 +8,10 @@ import {
   RESTAURANT_TYPE_KEY,
 } from "../pages/RestaurantList";
 import CardShimmer from "../components/Shimmer";
-import { useDispatch } from 'react-redux';
+import { useDispatch } from "react-redux";
 import { addToCart } from "../redux/slices/cartSlice";
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
-import {toast} from 'react-hot-toast';
+import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
+import { toast } from "react-hot-toast";
 
 const RestaurantMenu = () => {
   const { resId } = useParams(); // call useParams and get value of restaurant id using object destructuring
@@ -19,19 +19,17 @@ const RestaurantMenu = () => {
   const [menuItems, setMenuItems] = useState([]);
   const dispatch = useDispatch();
 
-    // console.log(activeIndex, index);
-    // console.log(items?.card?.card?.itemCards);
-    const handleAddToCart = (item) => {
-      dispatch(addToCart(item));
-      toast.success('Added to cart!', {
-        style: {
-         height:'50px'
-        },
-      });
+  // console.log(activeIndex, index);
+  // console.log(items?.card?.card?.itemCards);
+  const handleAddToCart = (item) => {
+    dispatch(addToCart(item));
+    toast.success("Added to cart!", {
+      style: {
+        height: "50px",
+      },
+    });
+  };
 
-  
-    };
-  
   useEffect(() => {
     getRestaurantInfo(); // caWll getRestaurantInfo function so it fetch api data and set data in restaurant state variable
   }, []);
@@ -42,23 +40,29 @@ const RestaurantMenu = () => {
       const json = await response.json();
 
       // Set restaurant data
-      const restaurantData = json?.data?.cards?.map(x => x.card)?.
-                             find(x => x && x.card['@type'] === RESTAURANT_TYPE_KEY)?.card?.info || null;
+      const restaurantData =
+        json?.data?.cards
+          ?.map((x) => x.card)
+          ?.find((x) => x && x.card["@type"] === RESTAURANT_TYPE_KEY)?.card
+          ?.info || null;
       setRestaurant(restaurantData);
 
       // Set menu item data
-      const menuItemsData = json?.data?.cards.find(x=> x.groupedCard)?.
-                            groupedCard?.cardGroupMap?.REGULAR?.
-                            cards?.map(x => x.card?.card)?.
-                            filter(x=> x['@type'] == MENU_ITEM_TYPE_KEY)?.
-                            map(x=> x.itemCards).flat().map(x=> x.card?.info) || [];
-      
+      const menuItemsData =
+        json?.data?.cards
+          .find((x) => x.groupedCard)
+          ?.groupedCard?.cardGroupMap?.REGULAR?.cards?.map((x) => x.card?.card)
+          ?.filter((x) => x["@type"] == MENU_ITEM_TYPE_KEY)
+          ?.map((x) => x.itemCards)
+          .flat()
+          .map((x) => x.card?.info) || [];
+
       const uniqueMenuItems = [];
       menuItemsData.forEach((item) => {
-        if (!uniqueMenuItems.find(x => x.id === item.id)) {
+        if (!uniqueMenuItems.find((x) => x.id === item.id)) {
           uniqueMenuItems.push(item);
         }
-      })
+      });
       setMenuItems(uniqueMenuItems);
     } catch (error) {
       setMenuItems([]);
@@ -66,13 +70,12 @@ const RestaurantMenu = () => {
       console.log(error);
     }
   }
-function imageurl(imageId)
-{
-  return  `https://res.cloudinary.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_208,h_208,c_fit/${imageId}`;
-}
+  function imageurl(imageId) {
+    return `https://res.cloudinary.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_208,h_208,c_fit/${imageId}`;
+  }
 
   return !restaurant ? (
-    <CardShimmer/>
+    <CardShimmer />
   ) : (
     <div className="restaurant-menu">
       <div className="restaurant-summary">
@@ -85,14 +88,17 @@ function imageurl(imageId)
           <h2 className="restaurant-title">{restaurant?.name}</h2>
           <p className="restaurant-tags">{restaurant?.cuisines?.join(", ")}</p>
           <div className="restaurant-details">
-            <div className="restaurant-rating" style={
-            (restaurant?.avgRating) < 4
-              ? { backgroundColor: "var(--light-red)" }
-              : (restaurant?.avgRating) === "--"
-              ? { backgroundColor: "white", color: "black" }
-              : { color: "white" }
-          }>
-            <i className="fa fa-star"></i>
+            <div
+              className="restaurant-rating"
+              style={
+                restaurant?.avgRating < 4
+                  ? { backgroundColor: "var(--light-red)" }
+                  : restaurant?.avgRating === "--"
+                    ? { backgroundColor: "white", color: "black" }
+                    : { color: "white" }
+              }
+            >
+              <i className="fa fa-star"></i>
               <span>{restaurant?.avgRating}</span>
             </div>
             <div className="restaurant-rating-slash">|</div>
@@ -107,9 +113,7 @@ function imageurl(imageId)
         <div className="menu-items-container">
           <div className="menu-title-wrap">
             <h3 className="menu-title">Recommended</h3>
-            <p className="menu-count">
-              {menuItems.length} ITEMS
-            </p>
+            <p className="menu-count">{menuItems.length} ITEMS</p>
           </div>
           <div className="menu-items-list">
             {menuItems.map((item) => (
@@ -134,13 +138,12 @@ function imageurl(imageId)
                       alt={item?.name}
                     />
                   )}
-                   <button
-                    onClick={() => handleAddToCart({ ...item})}
-                    className='Addtonew'
+                  <button
+                    onClick={() => handleAddToCart({ ...item })}
+                    className="Addtonew"
                   >
                     ADD
                   </button>
-              
                 </div>
               </div>
             ))}

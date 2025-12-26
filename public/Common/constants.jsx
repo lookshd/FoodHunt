@@ -16,9 +16,6 @@ export const shimmer_card_unit = 20;
 // shimmer Menu card unit
 export const shimmer_menu_card_unit = 4;
 
-
-
-
 // Github Authorization Token
 export const options = {
   method: "GET",
