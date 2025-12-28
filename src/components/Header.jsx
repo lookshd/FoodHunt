@@ -10,11 +10,20 @@ import {
   PhoneIcon,
   ShoppingBagIcon,
 } from "@heroicons/react/24/solid";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import useOnline from "../hooks/useOnline";
-import useAuth from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { selectItemsInCart } from "../redux/slices/cartSlice";
+import {
+  selectUser,
+  selectIsLoggedIn,
+  openLoginPopup,
+  logoutUser,
+  loginUser,
+} from "../redux/slices/authSlice";
+import { selectSearchText, setSearchText, filterRestaurants } from "../redux/slices/searchSlice";
 import { useSelector, useDispatch } from "react-redux";
 import useLocalStorage from "../hooks/useLocalStorage";
 const Title = () => (
@@ -25,43 +34,76 @@ const Title = () => (
 
 const Header = () => {
   const cartitems = useSelector(selectItemsInCart);
-
+  const user = useSelector(selectUser);
+  const isLoggedIn = useSelector(selectIsLoggedIn);
+  const searchText = useSelector(selectSearchText);
+  const dispatch = useDispatch();
+  console.log("isLoggedIn", isLoggedIn);
   const navigate = useNavigate();
 
   // call custom hook useLocalStorage for getting localStorage value of user
   const [getLocalStorage, , clearLocalStorage] = useLocalStorage("user");
 
-  // call custom hook useAuth for user is loggedin or not
-  const [isLoggedin, setIsLoggedin] = useAuth();
 
+  // Initialize login state from localStorage on component mount
   useEffect(() => {
-    // if value of getLocalStorage is equal to null setIsLoggedin to false
-    if (getLocalStorage === null) {
-      setIsLoggedin(false);
+    if (
+      getLocalStorage?.token?.length === 100 &&
+      !isLoggedIn &&
+      getLocalStorage
+    ) {
+      // User has valid token in localStorage but Redux state shows logged out
+      console.log("Initializing login from localStorage:", getLocalStorage);
+      dispatch(loginUser(getLocalStorage));
+    } else if (!getLocalStorage && isLoggedIn) {
+      // No localStorage but Redux shows logged in - clear Redux state
+      console.log("No localStorage found, clearing Redux state");
+      dispatch(logoutUser());
     }
-  }, [getLocalStorage]);
+  }, [getLocalStorage, isLoggedIn, dispatch]);
 
   // call custom hook useOnline if user is online or not
   const isOnline = useOnline();
 
+  const handleLoginClick = () => {
+    dispatch(openLoginPopup());
+  };
+
+  const handleLogout = () => {
+    console.log("Logging out user...");
+    // Dispatch logout first to update Redux state immediately
+    dispatch(logoutUser());
+    // Then clear localStorage
+    clearLocalStorage();
+  };
+  console.log("searchText",searchText);
+
   return (
     <div className="Header">
       <Title />
-      {isLoggedin && (
-        <div className="user-name">Hi {getLocalStorage?.userName}!</div>
+      {isLoggedIn && user && (
+        <div className="user-name">Hi {user.userName}!</div>
       )}
+      <div className="search-container">
+        <div className="search-input-wrapper">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search a restaurant you want..."
+            value={searchText}
+            onChange={(e) => dispatch(setSearchText(e.target.value))}
+          />
+          <FontAwesomeIcon
+            icon={faSearch}
+            className="search-icon"
+            onClick={() => {
+              dispatch(filterRestaurants());
+            }}
+          />
+        </div>
+      </div>
       <div className="nav-items">
         <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/about">About</Link>
-          </li>
-          <li>
-            <Link to="/contact">Contact</Link>
-          </li>
-
           <li>
             <Link
               to="/cart"
@@ -72,33 +114,20 @@ const Header = () => {
             </Link>
           </li>
           <li>
-            {/* use conditional rendering for login and logout */}
-            {isLoggedin ? (
-              <button
-                className="logout-btn"
-                onClick={() => {
-                  clearLocalStorage();
-                  setIsLoggedin(false);
-                }}
+            {isLoggedIn ? (
+              <p
+                onClick={handleLogout}
+                className="p-2 md:px-4 hover:bg-gray-50 rounded-md"
               >
                 Logout
-                <span
-                  className={isOnline ? "login-btn-green" : "login-btn-red"}
-                >
-                  {" "}
-                  ●
-                </span>
-              </button>
+              </p>
             ) : (
-              <button className="login-btn" onClick={() => navigate("/login")}>
-                Login
-                <span
-                  className={isOnline ? "login-btn-green" : "login-btn-red"}
-                >
-                  {" "}
-                  ●
-                </span>
-              </button>
+              <p
+                onClick={handleLoginClick}
+                className="p-2 md:px-4 hover:bg-gray-50 rounded-md"
+              >
+                Log in
+              </p>
             )}
           </li>
         </ul>

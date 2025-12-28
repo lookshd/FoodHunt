@@ -4,14 +4,35 @@ const useLocalStorage = (key) => {
   // get localStorage value
   const localStorageValue = localStorage.getItem(key);
 
-  // initial valur of localStorage
-  const [getLocalStorage, setLocalStorageValue] = useState(
-    localStorageValue ? JSON.parse(localStorageValue) : null,
-  );
+  // initial value of localStorage with proper validation
+  const [getLocalStorage, setLocalStorageValue] = useState(() => {
+    if (
+      !localStorageValue ||
+      localStorageValue === "undefined" ||
+      localStorageValue === "null"
+    ) {
+      return null;
+    }
+    try {
+      return JSON.parse(localStorageValue);
+    } catch (error) {
+      console.error("Error parsing localStorage value:", error);
+      return null;
+    }
+  });
 
   useEffect(() => {
-    if (localStorageValue) {
-      setLocalStorageValue(JSON.parse(localStorageValue));
+    if (
+      localStorageValue &&
+      localStorageValue !== "undefined" &&
+      localStorageValue !== "null"
+    ) {
+      try {
+        setLocalStorageValue(JSON.parse(localStorageValue));
+      } catch (error) {
+        console.error("Error parsing localStorage value:", error);
+        setLocalStorageValue(null);
+      }
     } else {
       setLocalStorageValue(null);
     }
@@ -24,7 +45,8 @@ const useLocalStorage = (key) => {
 
   // clear value in localStorage
   const clearLocalStorage = () => {
-    localStorage.clear();
+    localStorage.removeItem(key);
+    setLocalStorageValue(null);
   };
   return [getLocalStorage, setLocalStorage, clearLocalStorage];
 };

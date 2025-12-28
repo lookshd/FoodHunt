@@ -69,24 +69,51 @@
 
 /* Body CSS */
 .search-container {
-  margin: 20px auto;
+  margin: 16px auto;
   text-align: center;
   max-width: 100%;
   position: relative;
 }
 
+.search-input-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 400px;
+  max-width: 90%;
+}
+
 .search-container .search-input {
-  width: 40%;
+  width: 100%;
   box-sizing: border-box;
-  border-bottom-left-radius: 5px;
-  border-top-left-radius: 5px;
+  border-radius: 20px;
   background-color: #ffffff;
   box-shadow: 1px 2px 4px 0 rgba(0, 0, 0, 0.08);
-  padding: 14px 15px 14px 20px;
+  padding: 14px 50px 14px 20px;
   border: 1px solid #aabcca;
-  border-right: 0;
   color: #000000;
   outline: none;
+  font-size: 14px;
+}
+
+.search-container .search-input:focus {
+  border-color: #0768b3;
+  box-shadow: 0 0 0 2px rgba(7, 104, 179, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #0768b3;
+  cursor: pointer;
+  font-size: 16px;
+  transition: color 0.3s ease;
+  z-index: 1;
+}
+
+.search-icon:hover {
+  color: #016034;
 }
 
 .search-container .search-btn {
@@ -103,6 +130,43 @@
 }
 .search-container .search-btn:hover {
   background-color: #016034;
+}
+.body {
+  position: relative;
+}
+
+.body .login-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  width: 400px;
+}
+
+.body .restaurant-list-blur {
+  width: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Backdrop overlay for login popup */
+.login-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .restaurant-list {
@@ -1049,6 +1113,14 @@
   text-align: center;
 }
 
+.close-icon {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
 .login-form input {
   outline: 0;
   background: var(--input-bg);
@@ -1059,6 +1131,10 @@
   padding: 15px;
   box-sizing: border-box;
   font-size: 14px;
+}
+
+.error {
+  color: red;
 }
 
 .login-form input:focus {
@@ -1080,6 +1156,13 @@
   cursor: pointer;
 }
 
+.signup-text {
+  cursor: pointer;
+  color: #465f91;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
 .login-form button:active {
   background: #395591;
 }
@@ -1092,10 +1175,34 @@
 }
 
 .login-form p.error {
-  margin: 0 0 10px 10px;
+  margin: 0 0 10px 0px;
   text-align: left;
   font-size: 13px;
-  color: rgb(7, 8, 8);
+  color: rgb(226, 11, 11);
+}
+
+.otp-input-container {
+  margin: 15px 0;
+}
+
+.otp-input-container input {
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 3px;
+  font-weight: bold;
+}
+
+.close-icon {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  cursor: pointer;
+  font-size: 20px;
+  color: #666;
+}
+
+.close-icon:hover {
+  color: #333;
 }
 .login-btn-green {
   color: var(--dark-green);

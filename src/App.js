@@ -3,14 +3,13 @@ import Footer from "./components/Footer";
 import Body from "./pages/Body";
 import Error from "./pages/Error";
 import About from "./pages/About";
-import React from "react";
-import Login from "./pages/Login";
 import Contact from "./pages/Contact";
 import { Toaster } from "react-hot-toast";
 import RestaurantMenu from "./pages/RestaurantMenu";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import Cart from "./pages/Cart";
 import useOnline from "./hooks/useOnline";
+import React from "react";
 function App() {
   const isonline = useOnline();
 
@@ -63,10 +62,6 @@ export const appRouter = createBrowserRouter([
         element: <Cart />,
       },
     ],
-  },
-  {
-    path: "/login",
-    element: <Login />,
   },
 ]);
 export default App;
