@@ -5,16 +5,14 @@ import { selectItemsInCart } from "../redux/slices/cartSlice";
 
 const Cart = () => {
   const cartItems = useSelector(selectItemsInCart);
-  console.log(cartItems);
-  return (
-    <div className="container-max py-8 pb-16">
-      <h1 className="text-2xl my-4 font-semibold">Cart</h1>
 
-      {/* cart details */}
-      <div className="min-h-[60vh] pb-8 md:flex gap-8">
-        {/* cart items */}
-        <CartItemList />
-        {/* order summary */}
+  return (
+    <div className="cart-page">
+      <h1>Your Cart</h1>
+      <div className="cart-layout">
+        <div className="cart-items-section">
+          <CartItemList />
+        </div>
         {cartItems && cartItems.length !== 0 && <OrderSummary />}
       </div>
     </div>

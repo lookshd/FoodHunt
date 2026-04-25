@@ -1,48 +1,56 @@
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { selectItemsInCart, selectTotalPrice } from "../redux/slices/cartSlice";
+
 const OrderSummary = () => {
   const cartItems = useSelector(selectItemsInCart);
   const totalPrice = useSelector(selectTotalPrice);
+  const navigate = useNavigate();
 
   const discount = (totalPrice * 10) / 100;
   const deliveryCharges = (totalPrice * 5) / 100;
-  const totalAmt = totalPrice + (deliveryCharges - discount);
+  const totalAmt = totalPrice + deliveryCharges - discount;
+
+  const handlePlaceOrder = () => {
+    const orderId = `FH${Math.floor(Math.random() * 9000) + 1000}`;
+    const deliveryTime = Math.floor(Math.random() * 20) + 20;
+    navigate("/order-success", {
+      state: {
+        orderId,
+        deliveryTime,
+        totalAmount: totalAmt.toFixed(2),
+      },
+    });
+  };
 
   return (
-    <div className="basis-5/12 h-fit sticky top-40 p-8 rounded-md border shadow-md my-8 md:m-0">
-      <h2 className="text-xl font-bold border-b pb-4">Order Summary</h2>
+    <div className="order-summary">
+      <h2>Order Summary</h2>
 
-      {/* order details */}
-      <div className="py-4 text-lg space-y-4 border-b">
-        <div className="flex justify-between items-center font-semibold">
-          <p className="font-normal">Price ({cartItems.length} items)</p>
-          <p>₹ {totalPrice}</p>
-        </div>
-        <div className="flex justify-between items-center font-semibold">
-          <p className="font-normal">Discount (10%)</p>
-          <p> - ₹ {parseFloat(discount).toFixed(2)}</p>
-        </div>
-        <div className="flex justify-between items-center font-semibold">
-          <p className="font-normal">Delivery charges (5%)</p>
-          <p>+ ₹ {parseFloat(deliveryCharges).toFixed(2)}</p>
-        </div>
-
-        <p className="text-sm my-2">
-          You'll save ₹{parseFloat(discount).toFixed(2)} on this order 🎉
-        </p>
+      <div className="order-summary-row">
+        <span className="label">Price ({cartItems.length} items)</span>
+        <span className="value">₹{totalPrice.toFixed(2)}</span>
+      </div>
+      <div className="order-summary-row">
+        <span className="label">Discount (10%)</span>
+        <span className="value discount">- ₹{discount.toFixed(2)}</span>
+      </div>
+      <div className="order-summary-row">
+        <span className="label">Delivery charges (5%)</span>
+        <span className="value">+ ₹{deliveryCharges.toFixed(2)}</span>
       </div>
 
-      <div className="py-4 border-b">
-        <div className="md:flex justify-between items-center font-bold text-lg md:text-2xl">
-          <h1>Total Amount</h1>
-          <h1 className="text-orange-500">
-            ₹ {parseFloat(totalAmt).toFixed(2)}
-          </h1>
-        </div>
+      <div className="order-savings">
+        🎉 You'll save ₹{discount.toFixed(2)} on this order
       </div>
 
-      <button className="w-full block mt-4 uppercase font-bold text-lg bg-orange-600 text-white text-center p-4 rounded-md">
-        Place order
+      <div className="order-total">
+        <span className="label">Total Amount</span>
+        <span className="value">₹{totalAmt.toFixed(2)}</span>
+      </div>
+
+      <button className="place-order-btn" onClick={handlePlaceOrder}>
+        Place Order
       </button>
     </div>
   );

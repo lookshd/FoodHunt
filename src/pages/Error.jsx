@@ -1,14 +1,16 @@
 import React from "react";
 import { useRouteError, Link } from "react-router-dom";
+
 const Error = () => {
   const error = useRouteError();
 
   return (
     <div className="Error">
-      <h1>Oops! The restaurant you're looking for can't be found.</h1>
-      <h3 className="error-data">{error.data}</h3>
+      <div style={{ fontSize: 64, marginBottom: 16 }}>🍔</div>
+      <h1>Oops! Page not found</h1>
+      <h3 className="error-data">{error?.data || "Something went wrong"}</h3>
       <h3 className="error-back-home">
-        <Link to="/">Back Home</Link>
+        <Link to="/">Back to Home</Link>
       </h3>
     </div>
   );

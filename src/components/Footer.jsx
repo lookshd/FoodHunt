@@ -1,16 +1,18 @@
 import React from "react";
-import useOnline from "../hooks/useOnline";
+
 const Footer = () => {
   return (
-    <div className="footerr">
-      FoodHunt, made by{" "}
-      <a
-        href="https://lookshd.github.io/Abhishek-Mishra-Portfolio/"
-        target={"_blank"}
-        className="text-orange-500"
-      >
-        Abhishek Mishra
-      </a>
+    <div className="footer">
+      <p>
+        FoodHunt &copy; {new Date().getFullYear()} — Built with ❤️ by{" "}
+        <a
+          href="https://lookshd.github.io/Abhishek-Mishra-Portfolio/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Abhishek Mishra
+        </a>
+      </p>
     </div>
   );
 };

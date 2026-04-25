@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom"; // import useParams for read `resId`
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import {
   swiggy_menu_api_URL,
   IMG_CDN_URL,
@@ -7,39 +7,45 @@ import {
   MENU_ITEM_TYPE_KEY,
   RESTAURANT_TYPE_KEY,
 } from "../pages/RestaurantList";
-import CardShimmer from "../components/Shimmer";
-import { useDispatch } from "react-redux";
-import { addToCart } from "../redux/slices/cartSlice";
-import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/24/solid";
+import { MenuShimmer } from "../components/Shimmer";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToCart,
+  increaseItemQuantity,
+  decreaseItemQuantity,
+  selectItemsInCart,
+} from "../redux/slices/cartSlice";
 import { toast } from "react-hot-toast";
 
 const RestaurantMenu = () => {
-  const { resId } = useParams(); // call useParams and get value of restaurant id using object destructuring
-  const [restaurant, setRestaurant] = useState(null); // call useState to store the api data in res
+  const { resId } = useParams();
+  const [restaurant, setRestaurant] = useState(null);
   const [menuItems, setMenuItems] = useState([]);
+  const [fetchError, setFetchError] = useState(false);
   const dispatch = useDispatch();
+  const cartItems = useSelector(selectItemsInCart);
 
-  // console.log(activeIndex, index);
-  // console.log(items?.card?.card?.itemCards);
+  const getCartItem = (id) => cartItems.find((ci) => ci?.item?.id === id);
+
   const handleAddToCart = (item) => {
     dispatch(addToCart(item));
-    toast.success("Added to cart!", {
-      style: {
-        height: "50px",
-      },
-    });
+    toast.success(`${item.name} added to cart!`);
   };
 
+  const handleIncrease = (id) => dispatch(increaseItemQuantity({ id }));
+  const handleDecrease = (id) => dispatch(decreaseItemQuantity({ id }));
+
   useEffect(() => {
-    getRestaurantInfo(); // caWll getRestaurantInfo function so it fetch api data and set data in restaurant state variable
+    getRestaurantInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function getRestaurantInfo() {
     try {
+      setFetchError(false);
       const response = await fetch(swiggy_menu_api_URL + resId);
       const json = await response.json();
 
-      // Set restaurant data
       const restaurantData =
         json?.data?.cards
           ?.map((x) => x.card)
@@ -47,12 +53,11 @@ const RestaurantMenu = () => {
           ?.info || null;
       setRestaurant(restaurantData);
 
-      // Set menu item data
       const menuItemsData =
         json?.data?.cards
           .find((x) => x.groupedCard)
           ?.groupedCard?.cardGroupMap?.REGULAR?.cards?.map((x) => x.card?.card)
-          ?.filter((x) => x["@type"] == MENU_ITEM_TYPE_KEY)
+          ?.filter((x) => x["@type"] === MENU_ITEM_TYPE_KEY)
           ?.map((x) => x.itemCards)
           .flat()
           .map((x) => x.card?.info) || [];
@@ -67,15 +72,26 @@ const RestaurantMenu = () => {
     } catch (error) {
       setMenuItems([]);
       setRestaurant(null);
-      console.log(error);
+      setFetchError(true);
+      console.error(error);
     }
   }
-  function imageurl(imageId) {
-    return `https://res.cloudinary.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_208,h_208,c_fit/${imageId}`;
+
+  if (fetchError) {
+    return (
+      <div className="network-error">
+        <div className="network-error-icon">📡</div>
+        <h2>Unable to load restaurant menu</h2>
+        <p>Please check your connection and try again.</p>
+        <button className="retry-btn" onClick={getRestaurantInfo}>
+          Retry
+        </button>
+      </div>
+    );
   }
 
   return !restaurant ? (
-    <CardShimmer />
+    <MenuShimmer />
   ) : (
     <div className="restaurant-menu">
       <div className="restaurant-summary">
@@ -83,23 +99,14 @@ const RestaurantMenu = () => {
           className="restaurant-img"
           src={IMG_CDN_URL + restaurant?.cloudinaryImageId}
           alt={restaurant?.name}
+          loading="lazy"
         />
         <div className="restaurant-summary-details">
           <h2 className="restaurant-title">{restaurant?.name}</h2>
           <p className="restaurant-tags">{restaurant?.cuisines?.join(", ")}</p>
           <div className="restaurant-details">
-            <div
-              className="restaurant-rating"
-              style={
-                restaurant?.avgRating < 4
-                  ? { backgroundColor: "var(--light-red)" }
-                  : restaurant?.avgRating === "--"
-                    ? { backgroundColor: "white", color: "black" }
-                    : { color: "white" }
-              }
-            >
-              <i className="fa fa-star"></i>
-              <span>{restaurant?.avgRating}</span>
+            <div className="restaurant-rating">
+              ⭐ <span>{restaurant?.avgRating}</span>
             </div>
             <div className="restaurant-rating-slash">|</div>
             <div>{restaurant?.sla?.slaString}</div>
@@ -116,37 +123,66 @@ const RestaurantMenu = () => {
             <p className="menu-count">{menuItems.length} ITEMS</p>
           </div>
           <div className="menu-items-list">
-            {menuItems.map((item) => (
-              <div className="menu-item" key={item?.id}>
-                <div className="menu-item-details">
-                  <h3 className="item-title">{item?.name}</h3>
-                  <p className="item-cost">
-                    {item?.price > 0
-                      ? new Intl.NumberFormat("en-IN", {
-                          style: "currency",
-                          currency: "INR",
-                        }).format(item?.price / 100)
-                      : " "}
-                  </p>
-                  <p className="item-desc">{item?.description}</p>
+            {menuItems.map((item) => {
+              const cartItem = getCartItem(item?.id);
+              const isVeg = item?.isVeg === 1;
+              return (
+                <div className="menu-item" key={item?.id}>
+                  <div className="menu-item-details">
+                    {/* Veg/Non-veg icon */}
+                    <div className={isVeg ? "veg-icon" : "non-veg-icon"}>
+                      <div className="dot"></div>
+                    </div>
+                    <h3 className="item-title">{item?.name}</h3>
+                    <p className="item-cost">
+                      {item?.price > 0
+                        ? new Intl.NumberFormat("en-IN", {
+                            style: "currency",
+                            currency: "INR",
+                          }).format(item?.price / 100)
+                        : " "}
+                    </p>
+                    {item?.ratings?.aggregatedRating?.rating && (
+                      <p className="item-rating">
+                        ⭐ {item.ratings.aggregatedRating.rating}
+                        <span style={{ opacity: 0.6, marginLeft: 4, fontSize: 11 }}>
+                          ({item.ratings.aggregatedRating.ratingCountV2})
+                        </span>
+                      </p>
+                    )}
+                    <p className="item-desc">{item?.description}</p>
+                  </div>
+                  <div className="menu-img-wrapper">
+                    {item?.imageId && (
+                      <img
+                        className="menu-item-img"
+                        src={ITEM_IMG_CDN_URL + item?.imageId}
+                        alt={item?.name}
+                        loading="lazy"
+                      />
+                    )}
+                    {cartItem ? (
+                      <div className="qty-control">
+                        <button onClick={() => handleDecrease(item.id)}>
+                          −
+                        </button>
+                        <span>{cartItem.quantity}</span>
+                        <button onClick={() => handleIncrease(item.id)}>
+                          +
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleAddToCart({ ...item })}
+                        className="add-to-cart-btn"
+                      >
+                        ADD
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <div className="menu-img-wrapper">
-                  {item?.imageId && (
-                    <img
-                      className="menu-item-img"
-                      src={ITEM_IMG_CDN_URL + item?.imageId}
-                      alt={item?.name}
-                    />
-                  )}
-                  <button
-                    onClick={() => handleAddToCart({ ...item })}
-                    className="Addtonew"
-                  >
-                    ADD
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

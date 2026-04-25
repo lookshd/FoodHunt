@@ -6,94 +6,72 @@ import {
   selectItemsInCart,
 } from "../redux/slices/cartSlice";
 import { CDN_URL } from "../pages/RestaurantList";
+import { Link } from "react-router-dom";
 
 const CartItemList = () => {
   const cartItems = useSelector(selectItemsInCart);
   const dispatch = useDispatch();
-  console.log(cartItems);
 
   const removeItem = (id) => dispatch(removeFromCart({ id }));
   const decreaseQuantity = (id) => dispatch(decreaseItemQuantity({ id }));
   const increaseQuantity = (id) => dispatch(increaseItemQuantity({ id }));
 
-  // console.log('cart: ', cartItems);
-
   if (cartItems.length === 0) {
     return (
-      <div className="flex grow min-h-[vh] justify-center items-center">
-        <p>Your cart is empty!</p>
+      <div className="cart-empty">
+        <div className="cart-empty-icon">🛒</div>
+        <h3>Your cart is empty</h3>
+        <p>Add some delicious food to get started!</p>
+        <Link to="/">Browse Restaurants</Link>
       </div>
     );
   }
 
   return (
-    <ul className="basis-7/12">
-      {cartItems &&
-        cartItems.map((item) => (
-          <li
-            key={item?.item?.card?.info?.id}
-            className="flex gap-4 justify-between max-w-[600px] my-4"
-          >
-            <div className="basis-3/12">
-              <img
-                className="w-full h-full md:h-auto object-cover block rounded-md aspect-square"
-                src={CDN_URL + item?.item?.imageId}
-                alt=""
-              />
-            </div>
-            <div className="basis-9/12">
-              <p className="text-lg font-semibold">{item?.item?.name}</p>
-
-              <p className="hidden md:block">
-                {item?.item?.card?.info?.description?.length > 100
-                  ? item?.item?.card?.info?.description.slice(0, 100) + "..."
-                  : item?.item?.card?.info?.description}
-              </p>
-
-              <p className="my-2 space-x-1">
-                <span className="font-semibold">
-                  ₹
-                  {parseFloat(
-                    (
-                      item?.quantity * parseFloat(item?.item?.price / 100)
-                    ).toFixed(2),
-                  )}
-                </span>
-                <span className="text-gray-800 font-normal">
-                  ({item?.item?.price / 100} × {item?.quantity})
-                </span>
-              </p>
-
-              {/* actions */}
-              <div className="flex justify-between items-center mt-2">
-                <div className="flex items-center">
-                  <button
-                    onClick={() => decreaseQuantity(item?.item?.id)}
-                    disabled={item?.quantity === 1}
-                    className={"minus"}
-                  >
-                    -
-                  </button>
-                  <p className="number">{item?.quantity}</p>
-                  <button
-                    onClick={() => increaseQuantity(item?.item?.id)}
-                    className="add"
-                  >
-                    +
-                  </button>
-                </div>
-
+    <div>
+      {cartItems.map((item) => (
+        <div className="cart-item" key={item?.item?.id}>
+          <img
+            className="cart-item-img"
+            src={CDN_URL + item?.item?.imageId}
+            alt={item?.item?.name}
+            loading="lazy"
+          />
+          <div className="cart-item-info">
+            <h4>{item?.item?.name}</h4>
+            <p className="cart-item-price">
+              <span className="total">
+                ₹{((item?.quantity * item?.item?.price) / 100).toFixed(2)}
+              </span>
+              {" "}
+              <span style={{ fontSize: 12, opacity: 0.6 }}>
+                (₹{(item?.item?.price / 100).toFixed(2)} × {item?.quantity})
+              </span>
+            </p>
+            <div className="cart-item-actions">
+              <div className="cart-qty">
                 <button
-                  onClick={() => removeItem(item?.item?.id)}
-                  className="remove-button"
+                  onClick={() => decreaseQuantity(item?.item?.id)}
+                  disabled={item?.quantity === 1}
                 >
-                  Remove
+                  −
+                </button>
+                <span>{item?.quantity}</span>
+                <button onClick={() => increaseQuantity(item?.item?.id)}>
+                  +
                 </button>
               </div>
+              <button
+                onClick={() => removeItem(item?.item?.id)}
+                className="cart-remove-btn"
+              >
+                Remove
+              </button>
             </div>
-          </li>
-        ))}
-    </ul>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 };
 

@@ -1,20 +1,11 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import FoodFireLogo from "../images/simple-illustration-of-food-delivery-and-restaurant-logo-design-inspiration-icon-vector.jpg";
-import {
-  Bars3Icon,
-  BuildingOfficeIcon,
-  ChevronDownIcon,
-  HomeIcon,
-  MagnifyingGlassIcon,
-  MapPinIcon,
-  PhoneIcon,
-  ShoppingBagIcon,
-} from "@heroicons/react/24/solid";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
-import useOnline from "../hooks/useOnline";
-import { useNavigate } from "react-router-dom";
+import useDarkMode from "../hooks/useDarkMode";
+import useDebounce from "../hooks/useDebounce";
+
 import { selectItemsInCart } from "../redux/slices/cartSlice";
 import {
   selectUser,
@@ -23,111 +14,202 @@ import {
   logoutUser,
   loginUser,
 } from "../redux/slices/authSlice";
-import { selectSearchText, setSearchText, filterRestaurants } from "../redux/slices/searchSlice";
+import {
+  selectSearchText,
+  selectRestaurants,
+  selectRecentSearches,
+  setSearchText,
+  filterRestaurants,
+  clearRecentSearches,
+} from "../redux/slices/searchSlice";
 import { useSelector, useDispatch } from "react-redux";
 import useLocalStorage from "../hooks/useLocalStorage";
+
 const Title = () => (
-  <a href="/">
-    <img className="logo" src={FoodFireLogo} alt="Food Fire Logo" />
-  </a>
+  <Link to="/">
+    <img className="logo" src={FoodFireLogo} alt="FoodHunt Logo" />
+  </Link>
 );
 
 const Header = () => {
-  const cartitems = useSelector(selectItemsInCart);
+  const cartItems = useSelector(selectItemsInCart);
   const user = useSelector(selectUser);
   const isLoggedIn = useSelector(selectIsLoggedIn);
   const searchText = useSelector(selectSearchText);
+  const restaurants = useSelector(selectRestaurants);
+  const recentSearches = useSelector(selectRecentSearches);
   const dispatch = useDispatch();
-  console.log("isLoggedIn", isLoggedIn);
-  const navigate = useNavigate();
+  const [isDark, toggleDark] = useDarkMode();
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchRef = useRef(null);
 
-  // call custom hook useLocalStorage for getting localStorage value of user
+  const debouncedSearch = useDebounce(searchText, 300);
+
   const [getLocalStorage, , clearLocalStorage] = useLocalStorage("user");
 
+  // Auto-filter on debounced search
+  useEffect(() => {
+    if (restaurants.length > 0) {
+      dispatch(filterRestaurants());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedSearch]);
 
-  // Initialize login state from localStorage on component mount
+  // Initialize login state from localStorage
   useEffect(() => {
     if (
       getLocalStorage?.token?.length === 100 &&
       !isLoggedIn &&
       getLocalStorage
     ) {
-      // User has valid token in localStorage but Redux state shows logged out
-      console.log("Initializing login from localStorage:", getLocalStorage);
       dispatch(loginUser(getLocalStorage));
     } else if (!getLocalStorage && isLoggedIn) {
-      // No localStorage but Redux shows logged in - clear Redux state
-      console.log("No localStorage found, clearing Redux state");
       dispatch(logoutUser());
     }
   }, [getLocalStorage, isLoggedIn, dispatch]);
 
-  // call custom hook useOnline if user is online or not
-  const isOnline = useOnline();
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (searchRef.current && !searchRef.current.contains(e.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
-  const handleLoginClick = () => {
-    dispatch(openLoginPopup());
-  };
+  const handleLoginClick = () => dispatch(openLoginPopup());
 
   const handleLogout = () => {
-    console.log("Logging out user...");
-    // Dispatch logout first to update Redux state immediately
     dispatch(logoutUser());
-    // Then clear localStorage
     clearLocalStorage();
   };
-  console.log("searchText",searchText);
+
+  // Get search suggestions from restaurant names
+  const getSuggestions = useCallback(() => {
+    if (!searchText.trim() || !restaurants.length) return [];
+    const text = searchText.toLowerCase();
+    return restaurants
+      .filter(
+        (r) =>
+          r?.info?.name?.toLowerCase().includes(text) ||
+          r?.info?.cuisines?.some((c) => c.toLowerCase().includes(text))
+      )
+      .slice(0, 6)
+      .map((r) => r?.info?.name);
+  }, [searchText, restaurants]);
+
+  const handleSuggestionClick = (text) => {
+    dispatch(setSearchText(text));
+    dispatch(filterRestaurants());
+    setShowSuggestions(false);
+  };
 
   return (
     <div className="Header">
       <Title />
       {isLoggedIn && user && (
-        <div className="user-name">Hi {user.userName}!</div>
+        <div className="user-name">Hi, {user.userName}!</div>
       )}
-      <div className="search-container">
+      <div className="search-container" ref={searchRef}>
         <div className="search-input-wrapper">
           <input
             type="text"
             className="search-input"
-            placeholder="Search a restaurant you want..."
+            placeholder="Search restaurants or cuisines..."
             value={searchText}
-            onChange={(e) => dispatch(setSearchText(e.target.value))}
+            onChange={(e) => {
+              dispatch(setSearchText(e.target.value));
+              setShowSuggestions(true);
+            }}
+            onFocus={() => setShowSuggestions(true)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                dispatch(filterRestaurants());
+                setShowSuggestions(false);
+              }
+            }}
           />
           <FontAwesomeIcon
             icon={faSearch}
             className="search-icon"
             onClick={() => {
               dispatch(filterRestaurants());
+              setShowSuggestions(false);
             }}
           />
         </div>
+
+        {/* Search Suggestions Dropdown */}
+        {showSuggestions && (
+          <div className="search-suggestions">
+            {searchText.trim() && getSuggestions().length > 0 && (
+              <>
+                <div className="search-suggestions-header">Suggestions</div>
+                {getSuggestions().map((name, i) => (
+                  <div
+                    key={i}
+                    className="search-suggestion-item"
+                    onClick={() => handleSuggestionClick(name)}
+                  >
+                    <span>🔍</span>
+                    <span>{name}</span>
+                  </div>
+                ))}
+              </>
+            )}
+            {!searchText.trim() && recentSearches.length > 0 && (
+              <>
+                <div className="search-suggestions-header">
+                  Recent Searches
+                </div>
+                {recentSearches.map((term, i) => (
+                  <div
+                    key={i}
+                    className="search-suggestion-item"
+                    onClick={() => handleSuggestionClick(term)}
+                  >
+                    <span>🕐</span>
+                    <span>{term}</span>
+                  </div>
+                ))}
+                <div
+                  className="clear-recent"
+                  onClick={() => dispatch(clearRecentSearches())}
+                >
+                  Clear All
+                </div>
+              </>
+            )}
+            {searchText.trim() && getSuggestions().length === 0 && (
+              <div className="search-suggestion-item">
+                <span>😕</span>
+                <span>No results found</span>
+              </div>
+            )}
+          </div>
+        )}
       </div>
+
       <div className="nav-items">
         <ul>
           <li>
-            <Link
-              to="/cart"
-              className="p-2 relative md:px-4 hover:bg-gray-50 rounded-md flex items-center gap-2"
-            >
-              <p className="hidden md:block">Cart</p>
-              {<p className="itemshow">{cartitems.length}</p>}
+            <button className="theme-toggle" onClick={toggleDark} title="Toggle dark mode">
+              {isDark ? "☀️" : "🌙"}
+            </button>
+          </li>
+          <li>
+            <Link to="/cart" className="cart-badge">
+              <span>🛒</span>
+              <span className="itemshow">{cartItems.length}</span>
             </Link>
           </li>
           <li>
             {isLoggedIn ? (
-              <p
-                onClick={handleLogout}
-                className="p-2 md:px-4 hover:bg-gray-50 rounded-md"
-              >
-                Logout
-              </p>
+              <p onClick={handleLogout}>Logout</p>
             ) : (
-              <p
-                onClick={handleLoginClick}
-                className="p-2 md:px-4 hover:bg-gray-50 rounded-md"
-              >
-                Log in
-              </p>
+              <p onClick={handleLoginClick}>Log in</p>
             )}
           </li>
         </ul>

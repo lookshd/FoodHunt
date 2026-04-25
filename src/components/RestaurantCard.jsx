@@ -1,7 +1,9 @@
 import { IMG_CDN_URL } from "../pages/RestaurantList";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleFavorite, selectIsFavorite } from "../redux/slices/favoritesSlice";
 
-// Restaurant card component: Image, name, cuisine
 const RestaurantCard = ({
+  id,
   cloudinaryImageId,
   name,
   cuisines,
@@ -9,31 +11,55 @@ const RestaurantCard = ({
   sla,
   costForTwo,
   avgRatingString,
+  veg,
 }) => {
+  const dispatch = useDispatch();
+  const isFav = useSelector(selectIsFavorite(id));
+
+  const ratingNum = parseFloat(avgRatingString);
+  const ratingClass =
+    ratingNum >= 4 ? "good" : ratingNum >= 3 ? "avg" : "low";
+
+  const handleFavClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dispatch(
+      toggleFavorite({
+        info: { id, cloudinaryImageId, name, cuisines, areaName, sla, costForTwo, avgRatingString, veg },
+      })
+    );
+  };
+
   return (
     <div className="card">
-      <img src={IMG_CDN_URL + cloudinaryImageId} />
-      <h3>{name}</h3>
-      <h5>{cuisines.join(", ")}</h5>
-      <h5>{areaName}</h5>
-      <span>
-        <h4
-          style={
-            avgRatingString < 4
-              ? { backgroundColor: "var(--light-red)" }
-              : avgRatingString === "--"
-                ? { backgroundColor: "white", color: "black" }
-                : { color: "white" }
-          }
+      <div className="card-img-wrapper">
+        <img
+          src={IMG_CDN_URL + cloudinaryImageId}
+          alt={name}
+          loading="lazy"
+        />
+        <button
+          className={`card-fav-btn ${isFav ? "favorited" : ""}`}
+          onClick={handleFavClick}
         >
-          <i className="fa-solid fa-star"></i>
-          {avgRatingString}
-        </h4>
-        <h4>•</h4>
-        <h4>{sla?.lastMileTravelString ?? "2.0 km"}</h4>
-        <h4>•</h4>
-        <h4>{costForTwo ?? "₹200 for two"}</h4>
-      </span>
+          {isFav ? "❤️" : "🤍"}
+        </button>
+      </div>
+      <div className="card-body">
+        <h3>{name}</h3>
+        <p className="card-cuisines">{cuisines?.join(", ")}</p>
+        <p className="card-area">{areaName}</p>
+      </div>
+      <div className="card-footer">
+        <span className={`card-rating ${ratingClass}`}>
+          ⭐ {avgRatingString}
+        </span>
+        <span className="card-meta">
+          {sla?.slaString ?? "25-30 min"}
+          <span className="card-meta-dot">•</span>
+          {costForTwo ?? "₹200 for two"}
+        </span>
+      </div>
     </div>
   );
 };

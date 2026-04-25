@@ -1,15 +1,20 @@
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import Body from "./pages/Body";
 import Error from "./pages/Error";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
 import { Toaster } from "react-hot-toast";
-import RestaurantMenu from "./pages/RestaurantMenu";
-import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
-import Cart from "./pages/Cart";
+import { createBrowserRouter, Outlet } from "react-router-dom";
 import useOnline from "./hooks/useOnline";
-import React from "react";
+import React, { Suspense, lazy } from "react";
+import Shimmer from "./components/Shimmer";
+
+// Lazy loaded pages for code splitting
+const Body = lazy(() => import("./pages/Body"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const RestaurantMenu = lazy(() => import("./pages/RestaurantMenu"));
+const Cart = lazy(() => import("./pages/Cart"));
+const OrderSuccess = lazy(() => import("./pages/OrderSuccess"));
+
 function App() {
   const isonline = useOnline();
 
@@ -17,14 +22,28 @@ function App() {
     <>
       {isonline ? (
         <>
-          <Toaster />
+          <Toaster
+            position="bottom-center"
+            toastOptions={{
+              duration: 2000,
+              style: {
+                borderRadius: "12px",
+                padding: "12px 20px",
+                fontSize: "14px",
+                fontWeight: 500,
+              },
+            }}
+          />
           <Header />
-          <Outlet />
+          <Suspense fallback={<Shimmer />}>
+            <Outlet />
+          </Suspense>
           <Footer />
         </>
       ) : (
-        <div className="helloji">
-          <h1 className="text-4xl font-bold">Oops! Connection lost</h1>
+        <div className="offline-page">
+          <div style={{ fontSize: 56, marginBottom: 16 }}>📡</div>
+          <h1>Oops! Connection lost</h1>
           <p>
             Looks like you're offline, please check your internet connection.
           </p>
@@ -36,30 +55,57 @@ function App() {
 
 export const appRouter = createBrowserRouter([
   {
-    path: "/", // show path for routing
-    element: <App />, // show component for particular path
-    errorElement: <Error />, // show error component for path is different
+    path: "/",
+    element: <App />,
+    errorElement: <Error />,
     children: [
-      // show children component for routing
       {
         path: "/",
-        element: <Body />,
+        element: (
+          <Suspense fallback={<Shimmer />}>
+            <Body />
+          </Suspense>
+        ),
       },
       {
         path: "/about",
-        element: <About />,
+        element: (
+          <Suspense fallback={<Shimmer />}>
+            <About />
+          </Suspense>
+        ),
       },
       {
         path: "/contact",
-        element: <Contact />,
+        element: (
+          <Suspense fallback={<Shimmer />}>
+            <Contact />
+          </Suspense>
+        ),
       },
       {
         path: "/restaurant/:resId",
-        element: <RestaurantMenu />,
+        element: (
+          <Suspense fallback={<Shimmer />}>
+            <RestaurantMenu />
+          </Suspense>
+        ),
       },
       {
         path: "/cart",
-        element: <Cart />,
+        element: (
+          <Suspense fallback={<Shimmer />}>
+            <Cart />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/order-success",
+        element: (
+          <Suspense fallback={<Shimmer />}>
+            <OrderSuccess />
+          </Suspense>
+        ),
       },
     ],
   },
